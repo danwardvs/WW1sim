@@ -1,6 +1,7 @@
 #include<allegro.h>
 #include<alpng.h>
 #include<time.h>
+#include<vector>
 
 #define GERMAN 1
 #define CANADIAN 2
@@ -23,12 +24,34 @@ int fps;
 int frames_done;
 int old_time;
 
+int is_battling;
+
+struct projectile{
+  int x;
+  int y;
+  int type;
+};
+
 struct soldiers{
   int x;
   int y;
   int type;
   int country;
+  bool is_alive;
 }soldier[1000];
+
+std::vector<projectile> projectiles;
+
+//Create new projectile
+void create_projectile(int new_x, int new_y, int new_type){
+    //Make a projectile "newProjectile", pass the arguments from the function and put it into the vector
+    projectile newProjectile;
+    newProjectile.x=new_x;
+    newProjectile.y=new_y;
+    newProjectile.type=new_type;
+    projectiles.push_back(newProjectile);
+}
+
 
 void ticker(){
   ticks++;
@@ -66,6 +89,20 @@ void abort_on_error(const char *message){
 }
 
 void update(){
+    if(random(1,10)==1){
+      is_battling=1;
+    }
+    for(int i=0; i<1000; i++){
+      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,10)==1){
+        create_projectile(soldier[i].x,soldier[i].y,2);
+      }
+    }
+    for(int i=0; i<projectiles.size(); i++){
+      if(projectiles[i].type==2){
+        projectiles[i].y+=10;
+      }
+    }
+
 
 
 
@@ -84,10 +121,13 @@ void draw(){
       if(soldier[i].country==CANADIAN && soldier[i].type==2)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+10,makecol(0,0,0));
       if(soldier[i].country==CANADIAN && soldier[i].type==3)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+30,soldier[i].y+30,makecol(0,0,0));
 
+
     }
+  for(int i=0; i<projectiles.size(); i++){
+    rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(0,255,0));
+  }
 
-
-    draw_sprite(screen,buffer,0,0);
+  draw_sprite(screen,buffer,0,0);
 }
 
 
@@ -102,6 +142,7 @@ void setup(){
 
     for(int i=0; i<100; i++){
       int randomnumber=random(1,100);
+      soldier[i].is_alive=true;
 
       if(randomnumber<75){
         soldier[i].type=2;
@@ -126,8 +167,9 @@ void setup(){
 
     for(int i=100; i<200; i++){
       int randomnumber=random(1,100);
-
+      soldier[i].is_alive=true;
       if(randomnumber<75){
+
         soldier[i].type=2;
         soldier[i].country=CANADIAN;
         soldier[i].x=random(0,1024);
