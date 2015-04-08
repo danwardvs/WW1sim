@@ -58,6 +58,7 @@ void update(){
 
 void draw(){
 
+    rectfill(buffer,0,0,SCREEN_W,SCREEN_H,makecol(200,150,150));
     draw_sprite(screen,buffer,0,0);
 }
 
@@ -110,7 +111,7 @@ int main(){
 
 
 
-  set_window_title("Sci-Fi game!");
+  set_window_title("WW1 Sim");
   setup();
 
 
