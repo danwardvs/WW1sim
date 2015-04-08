@@ -64,7 +64,7 @@ void create_projectile(int new_x, int new_y, int new_type){
 }
 
 //Create new projectile
-void create_soldier(int new_x, int new_y, int new_type){
+void create_soldier(int new_x, int new_y, int new_type, int new_country){
     soldier newSoldier;
     newSoldier.x=new_x;
     newSoldier.y=new_y;
