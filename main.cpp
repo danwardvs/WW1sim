@@ -127,14 +127,16 @@ void update(){
         }
       }else if(projectiles[i].type>9){
         projectiles[i].type++;
-        if(projectiles[i].type>25){
-          projectiles.erase( projectiles.begin() + i);
-           for(int j=0; j<soldier.size(); j++){
+        for(int j=0; j<soldier.size(); j++){
               if(soldier[j].country==CANADIAN && soldier[j].type==2){
-                 if(collision(projectiles[i].x,projectiles[i].x+30,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+30,soldier[j].y,soldier[j].y+10)){
+                 if(collision(projectiles[i].x-30,projectiles[i].x+30,soldier[j].x,soldier[j].x+10,projectiles[i].y-30,projectiles[i].y+30,soldier[j].y,soldier[j].y+10)){
                   soldier.erase( soldier.begin() + j);
               }
            }
+
+        if(projectiles[i].type>25){
+          projectiles.erase( projectiles.begin() + i);
+
         }
 
       }
