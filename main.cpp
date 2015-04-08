@@ -10,6 +10,7 @@
 #define ARTILLERY 3
 
 BITMAP* buffer;
+BITMAP* background;
 
 bool close_button_pressed;
 
@@ -72,7 +73,8 @@ void update(){
 
 void draw(){
 
-  rectfill(buffer,0,0,SCREEN_W,SCREEN_H,makecol(200,150,150));
+  draw_sprite(buffer,background,0,0);
+  //rectfill(buffer,0,0,SCREEN_W,SCREEN_H,makecol(200,150,150));
     for(int i=0; i<1000; i++){
       if(soldier[i].country==GERMAN && soldier[i].type==1)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+30,makecol(255,0,0));
       if(soldier[i].country==GERMAN && soldier[i].type==2)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+10,makecol(255,0,0));
@@ -96,21 +98,57 @@ void draw(){
 
 void setup(){
     buffer=create_bitmap(1024,768);
+   srand(time(NULL));
+
     for(int i=0; i<100; i++){
-      soldier[i].type=random(1,3);
-      soldier[i].country=GERMAN;
-      soldier[i].x=random(0,1024);
-      soldier[i].y=random(0,300);
+      int randomnumber=random(1,100);
+
+      if(randomnumber<75){
+        soldier[i].type=2;
+        soldier[i].country=GERMAN;
+        soldier[i].x=random(0,1024);
+        soldier[i].y=random(140,160);
+      }
+       if(randomnumber>75 && 90>randomnumber){
+        soldier[i].type=1;
+        soldier[i].country=GERMAN;
+        soldier[i].x=random(0,1024);
+        soldier[i].y=random(130,110);
+      }
+      if(90<randomnumber){
+        soldier[i].type=3;
+        soldier[i].country=GERMAN;
+        soldier[i].x=random(0,1024);
+        soldier[i].y=random(0,100);
+      }
+
     }
 
     for(int i=100; i<200; i++){
-      soldier[i].type=random(1,3);
-      soldier[i].country=CANADIAN;
-      soldier[i].x=random(0,1024);
-      soldier[i].y=random(768,500);
+      int randomnumber=random(1,100);
+
+      if(randomnumber<75){
+        soldier[i].type=2;
+        soldier[i].country=CANADIAN;
+        soldier[i].x=random(0,1024);
+        soldier[i].y=random(560,540);
+      }
+       if(randomnumber>75 && 90>randomnumber){
+        soldier[i].type=1;
+        soldier[i].country=CANADIAN;
+        soldier[i].x=random(0,1024);
+        soldier[i].y=random(570,590);
+      }
+      if(90<randomnumber){
+        soldier[i].type=3;
+        soldier[i].country=CANADIAN;
+        soldier[i].x=random(0,1024);
+        soldier[i].y=random(600,768);
+      }
+
     }
 
-    srand(time(NULL));
+
 
      // Setup for FPS system
     LOCK_VARIABLE(ticks);
@@ -125,8 +163,8 @@ void setup(){
     LOCK_FUNCTION(close_button_handler);
     set_close_button_callback(close_button_handler);
 
-   // if (!(bmp = load_bitmap("bmp.png", NULL)))
-   //   abort_on_error("Cannot find image bmp.png\nPlease check your files and try again");
+   if (!(background = load_bitmap("background.png", NULL)))
+      abort_on_error("Cannot find image background.png\nPlease check your files and try again");
 }
 
 
