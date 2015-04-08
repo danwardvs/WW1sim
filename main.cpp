@@ -89,18 +89,29 @@ void abort_on_error(const char *message){
 }
 
 void update(){
-    if(random(1,10)==1){
+    if(random(1,100)==1){
       is_battling=1;
     }
     for(int i=0; i<1000; i++){
-      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,10)==1){
+      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,100)==1){
         create_projectile(soldier[i].x,soldier[i].y,2);
       }
     }
     for(int i=0; i<projectiles.size(); i++){
       if(projectiles[i].type==2){
         projectiles[i].y+=10;
+        if(projectiles[i].y>500 && projectiles[i].y<768 && random(1,25)==1){
+          //
+          projectiles[i].type=10;
+        }
+      }else if(projectiles[i].type>9){
+        projectiles[i].type++;
+        if(projectiles[i].type>25){
+          projectiles.erase( projectiles.begin() + i);
+        }
+
       }
+
     }
 
 
@@ -124,7 +135,9 @@ void draw(){
 
     }
   for(int i=0; i<projectiles.size(); i++){
-    rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(0,255,0));
+    if(projectiles[i].type==2)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(0,255,0));
+    if(projectiles[i].type>9)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+50,projectiles[i].y+50,makecol(255,255,0));
+
   }
 
   draw_sprite(screen,buffer,0,0);
