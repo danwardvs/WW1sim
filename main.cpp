@@ -2,6 +2,13 @@
 #include<alpng.h>
 #include<time.h>
 
+#define GERMAN 1
+#define CANADIAN 2
+
+#define MACHINEGUN 1
+#define SOLDIER 2
+#define ARTILLERY 3
+
 BITMAP* buffer;
 
 bool close_button_pressed;
@@ -14,6 +21,13 @@ volatile int game_time = 0;
 int fps;
 int frames_done;
 int old_time;
+
+struct soldiers{
+  int x;
+  int y;
+  int type;
+  int country;
+}soldier[1000];
 
 void ticker(){
   ticks++;
@@ -58,7 +72,19 @@ void update(){
 
 void draw(){
 
-    rectfill(buffer,0,0,SCREEN_W,SCREEN_H,makecol(200,150,150));
+  rectfill(buffer,0,0,SCREEN_W,SCREEN_H,makecol(200,150,150));
+    for(int i=0; i<1000; i++){
+      if(soldier[i].country==GERMAN && soldier[i].type==1)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+30,makecol(255,0,0));
+      if(soldier[i].country==GERMAN && soldier[i].type==2)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+10,makecol(255,0,0));
+      if(soldier[i].country==GERMAN && soldier[i].type==3)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+30,soldier[i].y+30,makecol(255,0,0));
+
+      if(soldier[i].country==CANADIAN && soldier[i].type==1)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+30,makecol(0,0,0));
+      if(soldier[i].country==CANADIAN && soldier[i].type==2)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+10,makecol(0,0,0));
+      if(soldier[i].country==CANADIAN && soldier[i].type==3)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+30,soldier[i].y+30,makecol(0,0,0));
+
+    }
+
+
     draw_sprite(screen,buffer,0,0);
 }
 
@@ -70,7 +96,19 @@ void draw(){
 
 void setup(){
     buffer=create_bitmap(1024,768);
+    for(int i=0; i<100; i++){
+      soldier[i].type=random(1,3);
+      soldier[i].country=GERMAN;
+      soldier[i].x=random(0,1024);
+      soldier[i].y=random(0,300);
+    }
 
+    for(int i=100; i<200; i++){
+      soldier[i].type=random(1,3);
+      soldier[i].country=CANADIAN;
+      soldier[i].x=random(0,1024);
+      soldier[i].y=random(768,500);
+    }
 
     srand(time(NULL));
 
