@@ -65,10 +65,11 @@ void create_projectile(int new_x, int new_y, int new_type){
 
 //Create new projectile
 void create_soldier(int new_x, int new_y, int new_type, int new_country){
-    soldier newSoldier;
+    soldiers newSoldier;
     newSoldier.x=new_x;
     newSoldier.y=new_y;
     newSoldier.type=new_type;
+    newSoldier.country=new_country;
     soldier.push_back(newSoldier);
 }
 
@@ -128,10 +129,10 @@ void update(){
         projectiles[i].type++;
         if(projectiles[i].type>25){
           projectiles.erase( projectiles.begin() + i);
-           for(int j=0; j<1000; j++){
+           for(int j=0; j<soldier.size(); j++){
               if(soldier[j].country==CANADIAN && soldier[j].type==2){
                  if(collision(projectiles[i].x,projectiles[i].x+30,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+30,soldier[j].y,soldier[j].y+10)){
-
+                  soldier.erase( soldier.begin() + j);
               }
            }
         }
@@ -149,7 +150,7 @@ void draw(){
 
   draw_sprite(buffer,background,0,0);
   //rectfill(buffer,0,0,SCREEN_W,SCREEN_H,makecol(200,150,150));
-    for(int i=0; i<1000; i++){
+    for(int i=0; i<soldier.size(); i++){
       if(soldier[i].country==GERMAN && soldier[i].type==1)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+30,makecol(255,0,0));
       if(soldier[i].country==GERMAN && soldier[i].type==2)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+10,soldier[i].y+10,makecol(255,0,0));
       if(soldier[i].country==GERMAN && soldier[i].type==3)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+30,soldier[i].y+30,makecol(255,0,0));
