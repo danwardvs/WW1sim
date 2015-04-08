@@ -32,15 +32,26 @@ struct projectile{
   int type;
 };
 
+std::vector<projectile> projectiles;
+
 struct soldiers{
   int x;
   int y;
   int type;
   int country;
-  bool is_alive;
-}soldier[1000];
+};
 
-std::vector<projectile> projectiles;
+std::vector<soldiers> soldier;
+
+
+//A function for collision, used for mouse clicking
+bool collision(int xMin1, int xMax1, int xMin2, int xMax2, int yMin1, int yMax1, int yMin2, int yMax2)
+{
+  if (xMin1 < xMax2 && yMin1 < yMax2 && xMin2 < xMax1 && yMin2 < yMax1){
+    return true;
+  }
+  return false;
+}
 
 //Create new projectile
 void create_projectile(int new_x, int new_y, int new_type){
@@ -50,6 +61,15 @@ void create_projectile(int new_x, int new_y, int new_type){
     newProjectile.y=new_y;
     newProjectile.type=new_type;
     projectiles.push_back(newProjectile);
+}
+
+//Create new projectile
+void create_soldier(int new_x, int new_y, int new_type){
+    soldier newSoldier;
+    newSoldier.x=new_x;
+    newSoldier.y=new_y;
+    newSoldier.type=new_type;
+    soldier.push_back(newSoldier);
 }
 
 
@@ -108,13 +128,19 @@ void update(){
         projectiles[i].type++;
         if(projectiles[i].type>25){
           projectiles.erase( projectiles.begin() + i);
+           for(int j=0; j<1000; j++){
+              if(soldier[j].country==CANADIAN && soldier[j].type==2){
+                 if(collision(projectiles[i].x,projectiles[i].x+30,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+30,soldier[j].y,soldier[j].y+10)){
+
+              }
+           }
         }
 
       }
 
     }
 
-
+    }
 
 
 }
@@ -155,50 +181,34 @@ void setup(){
 
     for(int i=0; i<100; i++){
       int randomnumber=random(1,100);
-      soldier[i].is_alive=true;
 
       if(randomnumber<75){
-        soldier[i].type=2;
-        soldier[i].country=GERMAN;
-        soldier[i].x=random(0,1024);
-        soldier[i].y=random(140,160);
+         create_soldier(random(0,1024),random(140,160),2,GERMAN);
       }
        if(randomnumber>75 && 90>randomnumber){
-        soldier[i].type=1;
-        soldier[i].country=GERMAN;
-        soldier[i].x=random(0,1024);
-        soldier[i].y=random(130,110);
+
+        create_soldier(random(0,1024),random(130,110),1,GERMAN);
+
       }
       if(90<randomnumber){
-        soldier[i].type=3;
-        soldier[i].country=GERMAN;
-        soldier[i].x=random(0,1024);
-        soldier[i].y=random(0,100);
+        create_soldier(random(0,1024),random(0,100),3,GERMAN);
+
       }
 
     }
 
     for(int i=100; i<200; i++){
       int randomnumber=random(1,100);
-      soldier[i].is_alive=true;
-      if(randomnumber<75){
 
-        soldier[i].type=2;
-        soldier[i].country=CANADIAN;
-        soldier[i].x=random(0,1024);
-        soldier[i].y=random(560,540);
+      if(randomnumber<75){
+        create_soldier(random(0,1024),random(560,540),2,CANADIAN);
+
       }
        if(randomnumber>75 && 90>randomnumber){
-        soldier[i].type=1;
-        soldier[i].country=CANADIAN;
-        soldier[i].x=random(0,1024);
-        soldier[i].y=random(570,590);
+        create_soldier(random(0,1024),random(570,590),1,CANADIAN);
       }
       if(90<randomnumber){
-        soldier[i].type=3;
-        soldier[i].country=CANADIAN;
-        soldier[i].x=random(0,1024);
-        soldier[i].y=random(600,768);
+          create_soldier(random(0,1024),random(600,768),3,CANADIAN);
       }
 
     }
