@@ -157,8 +157,8 @@ void update(){
           if(canadian_is_over_top==true){
             if(random(1,50)==1){
               create_projectile(soldier[i].x, soldier[i].y,60);
-              create_projectile(soldier[i].x-10, soldier[i].y,60);
-              create_projectile(soldier[i].x+10, soldier[i].y,60);
+              create_projectile(soldier[i].x-33, soldier[i].y,60);
+              create_projectile(soldier[i].x+33, soldier[i].y,60);
           }
           }
 
@@ -304,25 +304,26 @@ void setup(){
     buffer=create_bitmap(1024,768);
    srand(time(NULL));
 
-    for(int i=0; i<100; i++){
-      int randomnumber=random(1,100);
+    for(int i=0; i<75; i++){
+      int randomnumber=random(1,90);
 
       if(randomnumber<75){
          create_soldier(random(0,1024),random(140,160),2,GERMAN);
       }
-       if(randomnumber>75 && 90>randomnumber){
-
-        create_soldier(random(0,1024),random(130,110),1,GERMAN);
-
-      }
-      if(90<randomnumber){
+      if(74<randomnumber){
         create_soldier(random(0,1024),random(0,100),3,GERMAN);
 
       }
 
+
+
+    }
+    for(int i=0; i<10; i++){
+      create_soldier(i*100,random(140,160),1,GERMAN);
     }
 
-    for(int i=100; i<200; i++){
+
+    for(int i=0; i<100; i++){
       int randomnumber=random(1,100);
 
       if(randomnumber<75){
