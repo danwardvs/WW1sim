@@ -44,6 +44,7 @@ int over_top_timer_canadian;
 
 int is_battling;
 int is_artillery;
+bool is_battle_started;
 
 struct projectile{
   int x;
@@ -146,6 +147,8 @@ void abort_on_error(const char *message){
 }
 
 void update(){
+
+    //canadian_is_over_top=false;
     if(timer>300){
       //is_battling=1;
     }
@@ -161,6 +164,10 @@ void update(){
       is_artillery=1;//Over the top
     }
 
+    if(key[KEY_D]){
+      is_battle_started=true;
+    }
+
     timer++;
     if(is_battling==1){
       if(random(1,10)&& reinforcements_canadian>0){
@@ -172,7 +179,7 @@ void update(){
       if(soldier[i].y<500 && soldier[i].country==CANADIAN){
         canadian_is_over_top=true;
       }
-      if(is_battling==15 || (soldier[i].y<560 && soldier[i].country==CANADIAN)){
+      if(is_battling==15 || (soldier[i].y<540 && soldier[i].country==CANADIAN)){
         if(soldier[i].type==2 && soldier[i].country==CANADIAN){
           if( soldier[i].y>350 && soldier[i].y<450){
             if(random(1,20)==1)soldier[i].y--;
@@ -191,11 +198,11 @@ void update(){
       if(soldier[i].type==2){
         if(random(1,100)==1)soldier[i].x+=random(-5,5);
 
-        if(random(1,1000)==1 && soldier[i].country==CANADIAN)create_projectile(soldier[i].x,soldier[i].y,50);
-        if(random(1,1000)==1 && soldier[i].country==GERMAN)create_projectile(soldier[i].x,soldier[i].y,60);
+        if(random(1,1000)==1 && soldier[i].country==CANADIAN && is_battle_started)create_projectile(soldier[i].x,soldier[i].y,50);
+        if(random(1,1000)==1 && soldier[i].country==GERMAN && is_battle_started)create_projectile(soldier[i].x,soldier[i].y,60);
       }
       if(soldier[i].type==1 && soldier[i].country==GERMAN){
-          if(canadian_is_over_top==true){
+          if(canadian_is_over_top==true && is_battle_started){
             if(random(1,50)==1){
               create_projectile(soldier[i].x, soldier[i].y,60);
               create_projectile(soldier[i].x-33, soldier[i].y,60);
@@ -389,6 +396,10 @@ void setup(){
       create_soldier(i*100,random(140,160),1,GERMAN);
     }
 
+    for(int i=0; i<10; i++){
+        create_soldier(i*100,random(560,580),1,CANADIAN);
+      }
+
 
     for(int i=0; i<100; i++){
       int randomnumber=random(1,100);
@@ -397,9 +408,7 @@ void setup(){
         create_soldier(random(0,1024),550,2,CANADIAN);
 
       }
-       if(randomnumber>75 && 90>randomnumber){
-        create_soldier(random(0,1024),random(570,590),1,CANADIAN);
-      }
+
       if(90<randomnumber){
           create_soldier(random(0,1024),random(600,768),3,CANADIAN);
       }
