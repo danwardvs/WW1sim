@@ -177,8 +177,13 @@ void update(){
     troops_canadian=0;
     for(int i=0; i<soldier.size(); i++){
       if(soldier[i].y<500 && soldier[i].country==CANADIAN){
-        canadian_is_over_top=true;
-      }
+          canadian_is_over_top=true;
+          break;
+      }else canadian_is_over_top=false;
+    }
+
+    for(int i=0; i<soldier.size(); i++){
+
       if(is_battling==15 || (soldier[i].y<540 && soldier[i].country==CANADIAN)){
         if(soldier[i].type==2 && soldier[i].country==CANADIAN){
           if( soldier[i].y>350 && soldier[i].y<450){
@@ -193,7 +198,7 @@ void update(){
         create_projectile(soldier[i].x,soldier[i].y,2);
       }
       if(soldier[i].y>560 && soldier[i].country==CANADIAN && soldier[i].type==2){
-        soldier[i].y--;
+        if(random(1,3)==1)soldier[i].y-=random(1,3);
       }
       if(soldier[i].type==2){
         if(random(1,100)==1)soldier[i].x+=random(-5,5);
@@ -270,13 +275,13 @@ void update(){
 
           if(soldier[j].country==GERMAN && (soldier[j].type==2|| soldier[j].type==1)){
                  if(collision(projectiles[i].x,projectiles[i].x+10,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+10,soldier[j].y,soldier[j].y+10)){
-                    if(soldier[j].y<160 && random(1,250)==1){
+                    if(soldier[j].y<180 && random(1,250)==1){
                         reinforcements_german--;
                         create_soldier_dead(soldier[j].x, soldier[j].y, GERMAN);
                         soldier.erase( soldier.begin() + j);
                         projectiles.erase( projectiles.begin() + i);
                     }
-                    if(soldier[j].y>170){
+                    if(soldier[j].y>180){
                         reinforcements_german--;
                         create_soldier_dead(soldier[j].x, soldier[j].y, GERMAN);
                         soldier.erase( soldier.begin() + j);
@@ -382,7 +387,7 @@ void setup(){
       int randomnumber=random(1,90);
 
       if(randomnumber<75){
-         create_soldier(random(0,1024),random(140,160),2,GERMAN);
+         create_soldier(random(0,1024),random(168,180),2,GERMAN);
       }
       if(74<randomnumber){
         create_soldier(random(0,1024),random(0,100),3,GERMAN);
@@ -405,7 +410,7 @@ void setup(){
       int randomnumber=random(1,100);
 
       if(randomnumber<75){
-        create_soldier(random(0,1024),550,2,CANADIAN);
+        create_soldier(random(0,1024),random(552,560),2,CANADIAN);
 
       }
 
