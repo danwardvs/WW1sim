@@ -25,6 +25,7 @@ int frames_done;
 int old_time;
 int timer;
 
+bool canadian_is_over_top;
 
 int reinforcements_german=1000;
 int reinforcements_canadian=1000;
@@ -128,14 +129,17 @@ void update(){
         create_soldier(random(0,1024),768,2,CANADIAN);
       }
     }
-
+    canadian_is_over_top=false;
     for(int i=0; i<soldier.size(); i++){
+      if(soldier[i].y<500 && soldier[i].country==CANADIAN){
+        canadian_is_over_top=true;
+      }
       if(is_battling==15){
         if(soldier[i].type==2 && soldier[i].country==CANADIAN){
           if(soldier[i].y<580){
             if(random(1,3)==1)soldier[i].y--;
           }
-          }
+        }
       }
       if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,100)==1 && is_battling==1){
         create_projectile(soldier[i].x,soldier[i].y,2);
@@ -143,9 +147,15 @@ void update(){
       if(soldier[i].y>560 && soldier[i].country==CANADIAN && soldier[i].type==2){
         soldier[i].y--;
       }
-      if(soldier[i].type==2)
+      if(soldier[i].type==2){
         if(random(1,100)==1)soldier[i].x+=random(-5,5);
-      if(soldier[i].type)
+
+        if(random(1,500)==1 && soldier[i].country==CANADIAN)create_projectile(soldier[i].x,soldier[i].y,50);
+        if(random(1,500)==1 && soldier[i].country==GERMAN)create_projectile(soldier[i].x,soldier[i].y,60);
+      }
+      if(soldier[i].type==1){
+
+      }
       if(soldier[i].country==CANADIAN && soldier[i].y<500){
         if(random(1,100)==1){
           create_projectile(soldier[i].x,soldier[i].y,50);
@@ -195,7 +205,7 @@ void update(){
                         soldier.erase( soldier.begin() + j);
                         projectiles.erase( projectiles.begin() + i);
                     }
-                    if(soldier[j].y>170 && random(1,100)==1){
+                    if(soldier[j].y>170){
                         reinforcements_german--;
                         soldier.erase( soldier.begin() + j);
                         projectiles.erase( projectiles.begin() + i);
@@ -207,12 +217,38 @@ void update(){
 
 
 
+
+
       }
 
-    }else if(projectiles[i].type==50){projectiles[i].type++;
-      }else if(projectiles[i].type==51){projectiles[i].type++;
+    }else if(projectiles[i].type==50 || projectiles[i].type==51 || projectiles[i].type==52 || projectiles[i].type==60 || projectiles[i].type==61 || projectiles[i].type==62){projectiles[i].type++;
 
-     } else if(projectiles[i].type==52){projectiles[i].type++;
+    }else if(projectiles[i].type==63){
+      projectiles[i].y+=30;
+      for(int j=0; j<soldier.size(); j++){
+
+          if(soldier[j].country==CANADIAN && (soldier[j].type==2 || soldier[j].type==1)){
+                 if(collision(projectiles[i].x,projectiles[i].x+10,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+10,soldier[j].y,soldier[j].y+10)){
+                    if(soldier[j].y>560 && random(1,1000)==1){
+                        reinforcements_canadian--;
+                        soldier.erase( soldier.begin() + j);
+                        projectiles.erase( projectiles.begin() + i);
+                    }
+                    if(soldier[j].y<540){
+                        reinforcements_canadian--;
+                        soldier.erase( soldier.begin() + j);
+                        projectiles.erase( projectiles.begin() + i);
+                    }
+
+                }
+           }
+
+
+
+
+
+
+      }
 
     }
     }
@@ -238,13 +274,14 @@ void draw(){
   for(int i=0; i<projectiles.size(); i++){
     if(projectiles[i].type==2)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(0,255,0));
     if(projectiles[i].type>9 && projectiles[i].type<50 )rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+50,projectiles[i].y+50,makecol(255,255,0));
-    if(projectiles[i].type==50 || projectiles[i].type==51 || projectiles[i].type==52)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(255,255,0));
-    if(projectiles[i].type==53)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+3,projectiles[i].y+3,makecol(0,0,0));
+    if(projectiles[i].type==50 || projectiles[i].type==51 || projectiles[i].type==52 || projectiles[i].type==60 || projectiles[i].type==61 || projectiles[i].type==62)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(255,255,0));
+    if(projectiles[i].type==53 || projectiles[i].type==63)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+3,projectiles[i].y+3,makecol(0,0,0));
   }
   textprintf_ex(buffer,font,10,10,makecol(0,0,0),-1,"%i",reinforcements_german);
   textprintf_ex(buffer,font,10,758,makecol(0,0,0),-1,"%i",reinforcements_canadian);
   textprintf_ex(buffer,font,10,20,makecol(0,0,0),-1,"%i",timer/60);
   textprintf_ex(buffer,font,10,30,makecol(0,0,0),-1,"%i",is_battling);
+  textprintf_ex(buffer,font,10,40,makecol(0,0,0),-1,"%i",canadian_is_over_top);
 
 
   draw_sprite(screen,buffer,0,0);
