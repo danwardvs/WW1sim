@@ -21,6 +21,7 @@ BITMAP* artillery_central;
 BITMAP* soldier_central_dead;
 BITMAP* soldier_allied_dead;
 BITMAP* shell;
+BITMAP* flash;
 
 bool close_button_pressed;
 
@@ -340,7 +341,9 @@ void draw(){
   for(int i=0; i<projectiles.size(); i++){
     if(projectiles[i].type==2)draw_sprite(buffer,shell,projectiles[i].x,projectiles[i].y);
     if(projectiles[i].type>9 && projectiles[i].type<50 )rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+50,projectiles[i].y+50,makecol(255,255,0));
-    if(projectiles[i].type==50 || projectiles[i].type==51 || projectiles[i].type==52 || projectiles[i].type==60 || projectiles[i].type==61 || projectiles[i].type==62)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(255,255,0));
+    if(projectiles[i].type==50 || projectiles[i].type==51 || projectiles[i].type==52)draw_sprite_v_flip(buffer,flash,projectiles[i].x+5,projectiles[i].y-10);
+    if(projectiles[i].type==60 || projectiles[i].type==61 || projectiles[i].type==62)draw_sprite(buffer,flash,projectiles[i].x+5,projectiles[i].y+10);
+
     if(projectiles[i].type==53 || projectiles[i].type==63)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+1,projectiles[i].y+3,makecol(0,0,0));
   }
   for(int i=0; i<soldier_dead.size(); i++){
@@ -391,7 +394,7 @@ void setup(){
       int randomnumber=random(1,100);
 
       if(randomnumber<75){
-        create_soldier(random(0,1024),random(560,540),2,CANADIAN);
+        create_soldier(random(0,1024),550,2,CANADIAN);
 
       }
        if(randomnumber>75 && 90>randomnumber){
@@ -443,6 +446,8 @@ void setup(){
 
     if (!(shell = load_bitmap("shell.png", NULL)))
       abort_on_error("Cannot find image shell.png\nPlease check your files and try again");
+    if (!(flash = load_bitmap("flash.png", NULL)))
+      abort_on_error("Cannot find image flash.png\nPlease check your files and try again");
 }
 
 
@@ -460,7 +465,7 @@ int main(){
   set_color_depth(32);
 
 
-  set_gfx_mode(GFX_AUTODETECT,1024,768, 0, 0);
+  set_gfx_mode(GFX_AUTODETECT_WINDOWED,1024,768, 0, 0);
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
 
 
