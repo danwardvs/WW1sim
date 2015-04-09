@@ -18,6 +18,9 @@ BITMAP* machinegun_allied;
 BITMAP* machinegun_central;
 BITMAP* artillery_allied;
 BITMAP* artillery_central;
+BITMAP* soldier_central_dead;
+BITMAP* soldier_allied_dead;
+BITMAP* shell;
 
 bool close_button_pressed;
 
@@ -35,8 +38,11 @@ bool canadian_is_over_top;
 
 int reinforcements_german=1000;
 int reinforcements_canadian=1000;
+int troops_canadian;
+int over_top_timer_canadian;
 
 int is_battling;
+int is_artillery;
 
 struct projectile{
   int x;
@@ -54,6 +60,14 @@ struct soldiers{
 };
 
 std::vector<soldiers> soldier;
+
+struct soldiers_dead{
+  int x;
+  int y;
+  int country;
+};
+
+std::vector<soldiers_dead> soldier_dead;
 
 
 //A function for collision, used for mouse clicking
@@ -86,6 +100,14 @@ void create_soldier(int new_x, int new_y, int new_type, int new_country){
     soldier.push_back(newSoldier);
 }
 
+void create_soldier_dead(int new_x, int new_y, int new_country){
+    soldiers_dead newSoldier;
+    newSoldier.x=new_x;
+    newSoldier.y=new_y;
+    newSoldier.country=new_country;
+
+    soldier_dead.push_back(newSoldier);
+}
 
 void ticker(){
   ticks++;
@@ -128,29 +150,38 @@ void update(){
     }
     if(key[KEY_A]){
       is_battling=15;//Over the top
+      over_top_timer_canadian=0;
     }
+    over_top_timer_canadian++;
+    if(over_top_timer_canadian>120){
+            is_battling=0;
+    }
+    if(key[KEY_S]){
+      is_artillery=1;//Over the top
+    }
+
     timer++;
     if(is_battling==1){
       if(random(1,10)&& reinforcements_canadian>0){
         create_soldier(random(0,1024),768,2,CANADIAN);
       }
     }
-
+    troops_canadian=0;
     for(int i=0; i<soldier.size(); i++){
       if(soldier[i].y<500 && soldier[i].country==CANADIAN){
         canadian_is_over_top=true;
       }
-      if(is_battling==15 || (soldier[i].y<500 && soldier[i].country==CANADIAN)){
+      if(is_battling==15 || (soldier[i].y<560 && soldier[i].country==CANADIAN)){
         if(soldier[i].type==2 && soldier[i].country==CANADIAN){
           if( soldier[i].y>350 && soldier[i].y<450){
             if(random(1,20)==1)soldier[i].y--;
           }
-          else if(soldier[i].y<580){
+          else if(soldier[i].y<570){
             if(random(1,3)==1)soldier[i].y--;
           }
         }
       }
-      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,100)==1 && is_battling==1){
+      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,100)==1 && is_artillery==1){
         create_projectile(soldier[i].x,soldier[i].y,2);
       }
       if(soldier[i].y>560 && soldier[i].country==CANADIAN && soldier[i].type==2){
@@ -172,6 +203,10 @@ void update(){
           }
 
       }
+      if(soldier[i].type==2 && soldier[i].country==CANADIAN){
+        troops_canadian++;
+      }
+
       if(soldier[i].country==CANADIAN && soldier[i].y<500){
         if(random(1,100)==1){
           create_projectile(soldier[i].x,soldier[i].y,50);
@@ -180,6 +215,10 @@ void update(){
       }
 
     }
+    if(troops_canadian<50 && reinforcements_canadian>0){
+        create_soldier(random(0,1024),768,2,CANADIAN);
+    }
+
     for(int i=0; i<projectiles.size(); i++){
       if(projectiles[i].x<0 || projectiles[i].x>1024 || projectiles[i].y<0 || projectiles[i].y>768){
         projectiles.erase( projectiles.begin() + i);
@@ -196,9 +235,16 @@ void update(){
         for(int j=0; j<soldier.size(); j++){
               if(soldier[j].country==CANADIAN && soldier[j].type==2){
                  if(collision(projectiles[i].x-30,projectiles[i].x+30,soldier[j].x,soldier[j].x+10,projectiles[i].y-30,projectiles[i].y+30,soldier[j].y,soldier[j].y+10)){
-                    if(soldier[j].country==GERMAN)reinforcements_german--;
-                    if(soldier[j].country==CANADIAN)reinforcements_canadian--;
+                    if(soldier[j].country==GERMAN){
+                            reinforcements_german--;
+                            create_soldier_dead(soldier[j].x, soldier[j].y, GERMAN);
+                    }
+                    if(soldier[j].country==CANADIAN){
+                            reinforcements_canadian--;
+                            create_soldier_dead(soldier[j].x, soldier[j].y, CANADIAN);
+                    }
                     soldier.erase( soldier.begin() + j);
+
 
                 }
            }
@@ -218,11 +264,13 @@ void update(){
                  if(collision(projectiles[i].x,projectiles[i].x+10,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+10,soldier[j].y,soldier[j].y+10)){
                     if(soldier[j].y<160 && random(1,250)==1){
                         reinforcements_german--;
+                        create_soldier_dead(soldier[j].x, soldier[j].y, GERMAN);
                         soldier.erase( soldier.begin() + j);
                         projectiles.erase( projectiles.begin() + i);
                     }
                     if(soldier[j].y>170){
                         reinforcements_german--;
+                        create_soldier_dead(soldier[j].x, soldier[j].y, GERMAN);
                         soldier.erase( soldier.begin() + j);
                         projectiles.erase( projectiles.begin() + i);
                     }
@@ -247,11 +295,13 @@ void update(){
                  if(collision(projectiles[i].x,projectiles[i].x+10,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+10,soldier[j].y,soldier[j].y+10)){
                     if(soldier[j].y>560 && random(1,250)==1){
                         reinforcements_canadian--;
+                        create_soldier_dead(soldier[j].x, soldier[j].y, CANADIAN);
                         soldier.erase( soldier.begin() + j);
                         projectiles.erase( projectiles.begin() + i);
                     }
                     if(soldier[j].y<540){
                         reinforcements_canadian--;
+                        create_soldier_dead(soldier[j].x, soldier[j].y, CANADIAN);
                         soldier.erase( soldier.begin() + j);
                         projectiles.erase( projectiles.begin() + i);
                     }
@@ -288,11 +338,16 @@ void draw(){
 
     }
   for(int i=0; i<projectiles.size(); i++){
-    if(projectiles[i].type==2)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(0,255,0));
+    if(projectiles[i].type==2)draw_sprite(buffer,shell,projectiles[i].x,projectiles[i].y);
     if(projectiles[i].type>9 && projectiles[i].type<50 )rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+50,projectiles[i].y+50,makecol(255,255,0));
     if(projectiles[i].type==50 || projectiles[i].type==51 || projectiles[i].type==52 || projectiles[i].type==60 || projectiles[i].type==61 || projectiles[i].type==62)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(255,255,0));
     if(projectiles[i].type==53 || projectiles[i].type==63)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+1,projectiles[i].y+3,makecol(0,0,0));
   }
+  for(int i=0; i<soldier_dead.size(); i++){
+    if(soldier_dead[i].country==GERMAN)draw_sprite(buffer,soldier_central_dead,soldier_dead[i].x,soldier_dead[i].y);
+    if(soldier_dead[i].country==CANADIAN)draw_sprite(buffer,soldier_allied_dead,soldier_dead[i].x,soldier_dead[i].y);
+  }
+
   textprintf_ex(buffer,font,10,10,makecol(0,0,0),-1,"%i",reinforcements_german);
   textprintf_ex(buffer,font,10,758,makecol(0,0,0),-1,"%i",reinforcements_canadian);
   textprintf_ex(buffer,font,10,20,makecol(0,0,0),-1,"%i",timer/60);
@@ -379,6 +434,15 @@ void setup(){
       abort_on_error("Cannot find image artillery_allied.png\nPlease check your files and try again");
     if (!(artillery_central = load_bitmap("artillery_central.png", NULL)))
       abort_on_error("Cannot find image artillery_central.png\nPlease check your files and try again");
+
+    if (!(soldier_allied_dead = load_bitmap("soldier_allied_dead.png", NULL)))
+      abort_on_error("Cannot find image soldier_allied_dead.png\nPlease check your files and try again");
+    if (!(soldier_central_dead = load_bitmap("soldier_central_dead.png", NULL)))
+      abort_on_error("Cannot find image soldier_central_dead.png\nPlease check your files and try again");
+
+
+    if (!(shell = load_bitmap("shell.png", NULL)))
+      abort_on_error("Cannot find image shell.png\nPlease check your files and try again");
 }
 
 
@@ -396,7 +460,7 @@ int main(){
   set_color_depth(32);
 
 
-  set_gfx_mode(GFX_AUTODETECT_WINDOWED,1024,768, 0, 0);
+  set_gfx_mode(GFX_AUTODETECT,1024,768, 0, 0);
   install_sound(DIGI_AUTODETECT,MIDI_AUTODETECT,".");
 
 
