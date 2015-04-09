@@ -184,6 +184,7 @@ void update(){
       }else canadian_is_over_top=false;
     }
 
+
     for(int i=0; i<soldier.size(); i++){
 
       if(is_battling==15 || (soldier[i].y<540 && soldier[i].country==CANADIAN)){
@@ -194,7 +195,8 @@ void update(){
           else if(soldier[i].y<570 && soldier[i].y>180){
             if(random(1,3)==1)soldier[i].y--;
           } else if(soldier[i].y<=180){
-            soldier[i].x+=random(-5,5);
+            if(random(1,10)==1)soldier[i].x+=random(-5,5);
+            if(random(1,10)==1)soldier[i].y+=random(-1,1);
             for(int j=0; j<soldier.size(); j++){
               if(soldier[j].country==GERMAN){
                 if(collision(soldier[i].x-10,soldier[i].x+10,soldier[j].x-10,soldier[j].x+10,soldier[i].y-10,soldier[i].y+10,soldier[j].y-10,soldier[j].y+10)){
@@ -248,7 +250,11 @@ void update(){
       }
 
     }
-    if(troops_canadian<50 && reinforcements_canadian>0){
+    if(troops_canadian<50 && reinforcements_canadian-troops_canadian>0){
+        create_soldier(random(0,1024),768,2,CANADIAN);
+    }
+
+    if(key[KEY_R] && reinforcements_canadian-troops_canadian>0){
         create_soldier(random(0,1024),768,2,CANADIAN);
     }
 
@@ -358,7 +364,14 @@ void update(){
 
 void draw(){
 
+
+
   draw_sprite(buffer,background,0,0);
+
+   for(int i=0; i<soldier_dead.size(); i++){
+    if(soldier_dead[i].country==GERMAN)draw_sprite(buffer,soldier_central_dead,soldier_dead[i].x,soldier_dead[i].y);
+    if(soldier_dead[i].country==CANADIAN)draw_sprite(buffer,soldier_allied_dead,soldier_dead[i].x,soldier_dead[i].y);
+  }
   //rectfill(buffer,0,0,SCREEN_W,SCREEN_H,makecol(200,150,150));
     for(int i=0; i<soldier.size(); i++){
       if(soldier[i].country==GERMAN && soldier[i].type==1)draw_sprite(buffer,machinegun_central,soldier[i].x,soldier[i].y);
@@ -379,13 +392,11 @@ void draw(){
 
     if(projectiles[i].type==53 || projectiles[i].type==63)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+1,projectiles[i].y+3,makecol(0,0,0));
   }
-  for(int i=0; i<soldier_dead.size(); i++){
-    if(soldier_dead[i].country==GERMAN)draw_sprite(buffer,soldier_central_dead,soldier_dead[i].x,soldier_dead[i].y);
-    if(soldier_dead[i].country==CANADIAN)draw_sprite(buffer,soldier_allied_dead,soldier_dead[i].x,soldier_dead[i].y);
-  }
+
 
   textprintf_ex(buffer,font,10,10,makecol(0,0,0),-1,"%i",reinforcements_german);
   textprintf_ex(buffer,font,10,758,makecol(0,0,0),-1,"%i",reinforcements_canadian);
+  textprintf_ex(buffer,font,10,748,makecol(0,0,0),-1,"%i",troops_canadian);
   textprintf_ex(buffer,font,10,20,makecol(0,0,0),-1,"%i",timer/60);
   textprintf_ex(buffer,font,10,30,makecol(0,0,0),-1,"%i",is_battling);
   textprintf_ex(buffer,font,10,40,makecol(0,0,0),-1,"%i",canadian_is_over_top);
