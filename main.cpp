@@ -146,8 +146,8 @@ void update(){
       if(soldier[i].type==2)
         if(random(1,100)==1)soldier[i].x+=random(-5,5);
       if(soldier[i].country==CANADIAN && soldier[i].y<500){
-        if(random(1,10)==1){
-          create_projectile(soldier[i].x,soldier[i].y,3);
+        if(random(1,100)==1){
+          create_projectile(soldier[i].x,soldier[i].y,50);
 
         }
       }
@@ -160,7 +160,7 @@ void update(){
           //
           projectiles[i].type=10;
         }
-      }else if(projectiles[i].type>9){
+      }else if(projectiles[i].type>9 && projectiles[i].type<50){
         projectiles[i].type++;
         for(int j=0; j<soldier.size(); j++){
               if(soldier[j].country==CANADIAN && soldier[j].type==2){
@@ -179,8 +179,10 @@ void update(){
 
       }
 
-    }else if(projectiles[i].type==3){
+    }else if(projectiles[i].type==53){
+      projectiles[i].y-=10;
       for(int j=0; j<soldier.size(); j++){
+
           if(soldier[j].country==GERMAN && (soldier[j].type==2|| soldier[j].type==1)){
                  if(collision(projectiles[i].x,projectiles[i].x+10,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+10,soldier[j].y,soldier[j].y+10) && random(1,5)==1){
                     if(soldier[j].country==GERMAN)reinforcements_german--;
@@ -195,8 +197,12 @@ void update(){
 
       }
 
-    }
+    }else if(projectiles[i].type==50){projectiles[i].type++;
+      }else if(projectiles[i].type==51){projectiles[i].type++;
 
+     } else if(projectiles[i].type==52){projectiles[i].type++;
+
+    }
     }
 
 
@@ -220,7 +226,8 @@ void draw(){
   for(int i=0; i<projectiles.size(); i++){
     if(projectiles[i].type==2)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(0,255,0));
     if(projectiles[i].type>9 && projectiles[i].type<50 )rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+50,projectiles[i].y+50,makecol(255,255,0));
-
+    if(projectiles[i].type==50 || projectiles[i].type==51 || projectiles[i].type==52)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+10,projectiles[i].y+10,makecol(255,255,0));
+    if(projectiles[i].type==53)rectfill(buffer,projectiles[i].x,projectiles[i].y,projectiles[i].x+3,projectiles[i].y+3,makecol(0,0,0));
   }
   textprintf_ex(buffer,font,10,10,makecol(0,0,0),-1,"%i",reinforcements_german);
   textprintf_ex(buffer,font,10,758,makecol(0,0,0),-1,"%i",reinforcements_canadian);
