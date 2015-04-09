@@ -194,7 +194,7 @@ void update(){
           }
         }
       }
-      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,100)==1 && is_artillery==1){
+      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,250)==1 && is_artillery==1){
         create_projectile(soldier[i].x,soldier[i].y,2);
       }
       if(soldier[i].y>560 && soldier[i].country==CANADIAN && soldier[i].type==2){
@@ -238,7 +238,7 @@ void update(){
       }
 
       if(projectiles[i].type==2){
-        projectiles[i].y+=10;
+        projectiles[i].y+=20;
         if(projectiles[i].y>500 && projectiles[i].y<768 && random(1,25)==1){
           //
           projectiles[i].type=10;
@@ -247,7 +247,8 @@ void update(){
         projectiles[i].type++;
         for(int j=0; j<soldier.size(); j++){
               if(soldier[j].country==CANADIAN && soldier[j].type==2){
-                 if(collision(projectiles[i].x-30,projectiles[i].x+30,soldier[j].x,soldier[j].x+10,projectiles[i].y-30,projectiles[i].y+30,soldier[j].y,soldier[j].y+10)){
+                 if(collision(projectiles[i].x-10,projectiles[i].x+10,soldier[j].x,soldier[j].x+10,projectiles[i].y-10,projectiles[i].y+10,soldier[j].y,soldier[j].y+10)){
+                 // if(collision(projectiles[i].x,projectiles[i].x+10,soldier[j].x,soldier[j].x+10,projectiles[i].y,projectiles[i].y+10,soldier[j].y,soldier[j].y+10)){
                     if(soldier[j].country==GERMAN){
                             reinforcements_german--;
                             create_soldier_dead(soldier[j].x, soldier[j].y, GERMAN);
@@ -262,10 +263,7 @@ void update(){
                 }
            }
 
-        if(projectiles[i].type>25){
-          projectiles.erase( projectiles.begin() + i);
 
-        }
 
       }
 
@@ -329,7 +327,10 @@ void update(){
 
       }
 
-    }
+    }else if(projectiles[i].type>25 && projectiles[i].type<50){
+          projectiles.erase( projectiles.begin() + i);
+
+        }
     }
 
 
