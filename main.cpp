@@ -45,6 +45,8 @@ int over_top_timer_canadian;
 int is_battling;
 int is_artillery;
 bool is_battle_started;
+bool is_artillery_canada;
+bool is_artillery_germany;
 
 struct projectile{
   int x;
@@ -161,7 +163,7 @@ void update(){
             is_battling=0;
     }
     if(key[KEY_S]){
-      is_artillery=1;//Over the top
+      is_artillery_germany=true;//asdffffffffffffffffffffffff hands!~
     }
 
     if(key[KEY_D]){
@@ -186,15 +188,33 @@ void update(){
 
       if(is_battling==15 || (soldier[i].y<540 && soldier[i].country==CANADIAN)){
         if(soldier[i].type==2 && soldier[i].country==CANADIAN){
-          if( soldier[i].y>350 && soldier[i].y<450){
+          if( soldier[i].y>225 && soldier[i].y<285){
             if(random(1,20)==1)soldier[i].y--;
           }
-          else if(soldier[i].y<570){
+          else if(soldier[i].y<570 && soldier[i].y>180){
             if(random(1,3)==1)soldier[i].y--;
-          }
+          } else if(soldier[i].y<=180){
+            soldier[i].x+=random(-5,5);
+            for(int j=0; j<soldier.size(); j++){
+              if(soldier[j].country==GERMAN){
+                if(collision(soldier[i].x-10,soldier[i].x+10,soldier[j].x-10,soldier[j].x+10,soldier[i].y-10,soldier[i].y+10,soldier[j].y-10,soldier[j].y+10)){
+                  if(random(1,3)==1){
+                      reinforcements_canadian--;
+                      create_soldier_dead(soldier[i].x, soldier[i].y, CANADIAN);
+                      soldier.erase( soldier.begin() + i);
+                  }else{
+                    reinforcements_german--;
+                    create_soldier_dead(soldier[j].x, soldier[j].y, GERMAN);
+                    soldier.erase( soldier.begin() + j);
+
+                  }
+                }
+              }
+            }
+        }
         }
       }
-      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,250)==1 && is_artillery==1){
+      if(soldier[i].type==3 && soldier[i].country==GERMAN && random(1,500)==1 && is_artillery_germany){
         create_projectile(soldier[i].x,soldier[i].y,2);
       }
       if(soldier[i].y>560 && soldier[i].country==CANADIAN && soldier[i].type==2){
@@ -203,7 +223,7 @@ void update(){
       if(soldier[i].type==2){
         if(random(1,100)==1)soldier[i].x+=random(-5,5);
 
-        if(random(1,1000)==1 && soldier[i].country==CANADIAN && is_battle_started)create_projectile(soldier[i].x,soldier[i].y,50);
+        if(random(1,1000)==1 && soldier[i].country==CANADIAN && is_battle_started && soldier[i].y<180)create_projectile(soldier[i].x,soldier[i].y,50);
         if(random(1,1000)==1 && soldier[i].country==GERMAN && is_battle_started)create_projectile(soldier[i].x,soldier[i].y,60);
       }
       if(soldier[i].type==1 && soldier[i].country==GERMAN){
