@@ -129,7 +129,7 @@ void update(){
         create_soldier(random(0,1024),768,2,CANADIAN);
       }
     }
-    canadian_is_over_top=false;
+
     for(int i=0; i<soldier.size(); i++){
       if(soldier[i].y<500 && soldier[i].country==CANADIAN){
         canadian_is_over_top=true;
@@ -150,10 +150,17 @@ void update(){
       if(soldier[i].type==2){
         if(random(1,100)==1)soldier[i].x+=random(-5,5);
 
-        if(random(1,500)==1 && soldier[i].country==CANADIAN)create_projectile(soldier[i].x,soldier[i].y,50);
-        if(random(1,500)==1 && soldier[i].country==GERMAN)create_projectile(soldier[i].x,soldier[i].y,60);
+        if(random(1,1000)==1 && soldier[i].country==CANADIAN)create_projectile(soldier[i].x,soldier[i].y,50);
+        if(random(1,1000)==1 && soldier[i].country==GERMAN)create_projectile(soldier[i].x,soldier[i].y,60);
       }
-      if(soldier[i].type==1){
+      if(soldier[i].type==1 && soldier[i].country==GERMAN){
+          if(canadian_is_over_top==true){
+            if(random(1,50)==1){
+              create_projectile(soldier[i].x, soldier[i].y,60);
+              create_projectile(soldier[i].x-10, soldier[i].y,60);
+              create_projectile(soldier[i].x+10, soldier[i].y,60);
+          }
+          }
 
       }
       if(soldier[i].country==CANADIAN && soldier[i].y<500){
