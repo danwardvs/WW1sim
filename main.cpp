@@ -16,6 +16,8 @@ BITMAP* soldier_allied;
 BITMAP* soldier_central;
 BITMAP* machinegun_allied;
 BITMAP* machinegun_central;
+BITMAP* artillery_allied;
+BITMAP* artillery_central;
 
 bool close_button_pressed;
 
@@ -277,11 +279,11 @@ void draw(){
     for(int i=0; i<soldier.size(); i++){
       if(soldier[i].country==GERMAN && soldier[i].type==1)draw_sprite(buffer,machinegun_central,soldier[i].x,soldier[i].y);
       if(soldier[i].country==GERMAN && soldier[i].type==2)draw_sprite(buffer,soldier_central,soldier[i].x,soldier[i].y);
-      if(soldier[i].country==GERMAN && soldier[i].type==3)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+30,soldier[i].y+30,makecol(255,0,0));
+      if(soldier[i].country==GERMAN && soldier[i].type==3)draw_sprite(buffer,artillery_central,soldier[i].x,soldier[i].y);
 
       if(soldier[i].country==CANADIAN && soldier[i].type==1)draw_sprite(buffer,machinegun_allied,soldier[i].x,soldier[i].y);
       if(soldier[i].country==CANADIAN && soldier[i].type==2)draw_sprite(buffer,soldier_allied,soldier[i].x,soldier[i].y);
-      if(soldier[i].country==CANADIAN && soldier[i].type==3)rectfill(buffer,soldier[i].x,soldier[i].y,soldier[i].x+30,soldier[i].y+30,makecol(0,0,0));
+      if(soldier[i].country==CANADIAN && soldier[i].type==3)draw_sprite(buffer,artillery_allied,soldier[i].x,soldier[i].y);
 
 
     }
